@@ -1,56 +1,85 @@
 class node:
-    def __init__(self, data=None):
-        self.data = data
-        self.next = None
+    def __init__(self, value = None):
+        self.value = value
+        self.left = None
+        self.right = None
 
-class linkedlist:
+class binary_search_tree:
     def __init__(self):
-        self.head = node()
+        self.root = None
+    
+    def insert(self, value):
+        if self.root == None:
+            self.root = node(value)
+        else:
+            self._insert(value, self.root)              #private insert function    #._ is understood as private functions. python does not has private function but using "._" is understood as pvt functions     
+    
+    def _insert(self, value, cur_node):
+        if value < cur_node.value:
+            if cur_node.left == None:
+                cur_node.left = node(value)
+            else:
+                self._insert(value, cur_node.left)
+        elif value > cur_node.value:
+            if cur_node.right == None:
+                cur_node.right = node(value)
+            else:
+                self._insert(value, cur_node.right)
+        else:
+            return "the value is already in the tree"
+        
+    def print_tree(self):
+        if self.root!=None:
+            self._print_tree(self.root)
+    
+    def _print_tree(self, cur_node):
+        if cur_node!=None:
+            self._print_tree(cur_node.left)
+            print(str(cur_node.value))
+            self._print_tree(cur_node.right)
 
-    def append(self, data):
-        new_node = node(data)
-        cur = self.head
-        while cur.next is not None:
-            cur = cur.next
-        cur.next = new_node
+    def tree_height(self):
+        if self.root!=None:
+            return self._tree_height(self.root, 0)
+        else:
+            return 0
 
-    def length(self):
-        cur = self.head
-        total = 0
-        while cur.next is not None:
-            total += 1
-            cur = cur.next
-        return total
+    def _tree_height(self, cur_node, cur_height):
+        if cur_node==None:
+            return cur_height
+        left_height = self._tree_height(cur_node.left, cur_height+1)
+        right_height = self._tree_height(cur_node.right, cur_height+1)
+        return max(left_height, right_height)
 
-    def display(self):
-        elem = []
-        cur_node = self.head
-        while cur_node.next is not None:
-            cur_node = cur_node.next
-            elem.append(cur_node.data)
-        print(elem)
 
-    def get(self, index):
-        if index < 0 or index >= self.length():
-            print("ERROR: 'Get' Index out of range!")
-            return None
+    def search(self, value):
+        if self.root!=None:
+            return self._search(value, self.root)
+        else:
+            return False
+    
+    def _search(self, value, cur_node):
+        if value == cur_node.value:
+            return True
+        elif value < cur_node.value and cur_node.left != None:
+            return self._search(value, cur_node.left)
+        elif value > cur_node.value and cur_node.right != None:
+            return self._search(value, cur_node.right) 
+        else:
+            return False
 
-        cur_idx = 0
-        cur_node = self.head.next
-        while cur_node is not None:
-            if cur_idx == index:
-                return cur_node.data
-            cur_node = cur_node.next
-            cur_idx += 1
+    def delete(self, value):
+        
 
-# Example usage:
-mylist = linkedlist()
+tree = binary_search_tree()
 
-mylist.append(2)
-mylist.append(4)
-mylist.append(8)
-mylist.append(10)
+tree.insert(1)
+tree.insert(10)
+tree.insert(2)
+tree.insert(6)
+tree.insert(7)
+tree.insert(7)
 
-mylist.display()
-
-print("the element in the 2nd index is: %d" % mylist.get(1))
+tree.print_tree()
+print("the height of the tree is "+ str(tree.tree_height()))
+print(tree.search(40))
